@@ -1,5 +1,6 @@
-import ru_local
+"""Buying a book from an online store"""
 
+import ru_local
 
 def main():
     """Main program with data entry"""
@@ -20,7 +21,6 @@ def main():
         print('{}'.format(ru_local.input_error))
         main()
 
-
 def library_by_genre():
     """Compiling a list of books by genre """
     print('{}'.format(ru_local.question_genre))
@@ -31,6 +31,7 @@ def library_by_genre():
            num_choice == 6):
         print(ru_local.input_error)
         library_by_genre()
+        return
     with open('Book_data.txt', 'r', encoding='utf-8') as f_in:
         text = f_in.readlines()
         books_by_genry = {}
@@ -43,15 +44,14 @@ def library_by_genre():
                 books_by_genry[genre] = data
             else:
                 books_by_genry[genre] += data
-    print(books_by_genry)
     output_books = books_by_genry[ru_local.list_of_genre[num_choice - 1]]
-    print(output_books)
     print (ru_local.books_by_genre)
     for num_book in range(len(output_books)):
         print(num_book + 1, '. ', output_books[num_book][1], ' "', output_books[num_book][2], '"', sep='')
     right_choice_book = input(ru_local.right_choice)
     if right_choice_book.upper() == ru_local.no:
         main()
+        return
     num_choice_book = int(input(ru_local.num_book))
     print(ru_local.book, output_books[num_choice_book - 1][1], ' "', output_books[num_choice_book - 1][2], '"',
           sep='')
@@ -62,30 +62,34 @@ def library_by_author():
     """Compiling a list of books by author"""
     print('{}'.format(ru_local.question_author))
     surname = input()
+    check = False
     with open('Book_data.txt', 'r', encoding='utf-8') as f_in:
         text = f_in.readlines()
         books_by_author = {}
         for i in range(len(text)):
             genre, writer, title, year = text[i].split(' - ')
             year = int(year)
+            if surname in writer:
+                surname = writer
+                check = True
             data = []
             data.append([year, writer, title])
             if writer not in books_by_author:
                 books_by_author[writer] = data
             else:
                 books_by_author[writer] += data
-    if not(surname in books_by_author):
-        print(ru_local.input_error)
+    if not(check):
+        print(ru_local.input_error_author)
         library_by_author()
-    print(books_by_author)
+        return
     output_books = books_by_author[surname]
-    print(output_books)
-    print (ru_local.books_by_author)
+    print(ru_local.books_by_author)
     for num_book in range(len(output_books)):
         print(num_book + 1, '. ', output_books[num_book][1], ' "', output_books[num_book][2], '"', sep='')
     right_choice_book = input(ru_local.right_choice)
     if right_choice_book.upper() == ru_local.no:
         main()
+        return
     num_choice_book = int(input(ru_local.num_book))
     print(ru_local.book, output_books[num_choice_book - 1][1], ' "', output_books[num_choice_book - 1][2], '"',
           sep='')
@@ -99,6 +103,7 @@ def library_by_year():
     if not (gap_choice.upper() == ru_local.before or gap_choice.upper() == ru_local.after):
         print(ru_local.input_error)
         library_by_year()
+        return
     with open('Book_data.txt', 'r', encoding='utf-8') as f_in:
         text = f_in.readlines()
         books_by_year = {}
@@ -106,33 +111,33 @@ def library_by_year():
             genre, writer, title, year = text[i].split(' - ')
             year = int(year)
             data = []
-            data.append([writer, title])
+            data.append([writer, title, year])
             if genre not in books_by_year:
                 books_by_year[year] = data
             else:
                 books_by_year[year] += data
-    print(books_by_year)
     output_books = []
-    if gap_choice == ru_local.before:
+    if gap_choice.upper() == ru_local.before:
         for year in books_by_year:
             if year < 2000:
-                output_books += [books_by_year[year]]
+                output_books += books_by_year[year]
     else:
         for year in books_by_year:
             if year >= 2000:
-                output_books += [books_by_year[year]]
-    print(output_books)
+                output_books += books_by_year[year]
     print(ru_local.books_by_year)
     for num_book in range(len(output_books)):
-        print(num_book + 1, '. ', output_books[num_book][0], ' "', output_books[num_book][1], '"', sep='')
+        print(num_book + 1, '. ', output_books[num_book][0], ' "', output_books[num_book][1], '"', ' ',
+              output_books[num_book][2], ru_local.year, sep='')
     right_choice_book = input(ru_local.right_choice)
     if right_choice_book.upper() == ru_local.no:
         main()
+        return
     num_choice_book = int(input(ru_local.num_book))
     print(ru_local.book, output_books[num_choice_book - 1][0], ' "', output_books[num_choice_book - 1][1], '"',
           sep='')
     print()
-    print(ru_local.thanks)
+    return print(ru_local.thanks)
 
 if __name__ == '__main__':
     main()
